@@ -1,19 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CharacterController : MonoBehaviour {
-	
+public class CharacterMotor : MonoBehaviour {
+
+    public string player;
     public float maxSpeedX = 10f;
     public float airSpeedX = 30f;
-	public float wallSlideSpeed = 3f;
+	public float wallSlideSpeedForce = 3f;
     public float jumpForce = 20f;
     public float wallJumpForce = 20f;
-    public float wallJumpTime = 1f;
-	public float defaultGravity = 5;
+	public float inverseGravity = 5;
 	float currentControlX;
-    public bool _grounded;
-    public bool _walledR;
-    public bool _walledL;
+    bool _grounded;
+    bool _walledR;
+    bool _walledL;
     public bool canControlX = true;
 	float inputX;
     public Transform groundCheck;
@@ -27,6 +27,13 @@ public class CharacterController : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
     {
+        if (player == "2")
+        {
+            rigidbody.useGravity = false;
+            wallSlideSpeedForce = -wallSlideSpeedForce;
+            jumpForce = -jumpForce;
+            wallJumpForce = -wallJumpForce;
+        }
         _grounded = false;
         _walledR = false;
         _walledL = false;
@@ -43,6 +50,7 @@ public class CharacterController : MonoBehaviour {
 	void FixedUpdate () 
     {
         BasicMotorMovement();
+        WallSlide();
 	}
 
     /// <summary>
@@ -51,12 +59,17 @@ public class CharacterController : MonoBehaviour {
     /// </summary>
     void BasicMotorMovement()
     {
+        if (player == "2")
+        {
+            rigidbody.AddForce(new Vector3(0, inverseGravity, 0));
+        }
+
         // these booleans determine what the character is in contact with, it uses raycasts and layermasks to do this
         _grounded = Physics.CheckSphere(groundCheck.position, groundRadius, whatIsGround);
         _walledR = Physics.CheckSphere(wallCheckR.position, wallRadius, whatIsClimbableWall);
         _walledL = Physics.CheckSphere(wallCheckL.position, wallRadius, whatIsClimbableWall);
 
-        inputX = Input.GetAxis("Horizontal");
+        inputX = Input.GetAxis("Horizontal"+player);
         currentControlX = inputX * maxSpeedX;
 
         if (canControlX && _grounded)
@@ -71,11 +84,38 @@ public class CharacterController : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// this causes the player character to slide down when in contact with the wall
+    /// </summary>
+    void WallSlide()
+    {
+        if (_walledR || _walledL)
+        {
+            rigidbody.AddForce(new Vector3(0, -wallSlideSpeedForce, 0));
+        }
+    }
+
+    /// <summary>
+    /// This deals with the player character jumping as well as the input for it
+    /// </summary>
     void Jumping()
     {
-        if (_grounded && Input.GetButton("Jump"))
+        if (Input.GetButtonDown("Jump" + player))
         {
-            rigidbody.AddForce(new Vector3(0, jumpForce, 0));
+            if (_grounded)
+            {
+                rigidbody.AddForce(new Vector3(0, jumpForce, 0));
+            }
+
+            if (_walledL)
+            {
+                rigidbody.AddForce(new Vector3(300, wallJumpForce, 0));
+            }
+
+            if (_walledR)
+            {
+                rigidbody.AddForce(new Vector3(-300, wallJumpForce, 0));
+            }
         }
     }
 }
