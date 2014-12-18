@@ -4,11 +4,19 @@ using System.Collections;
 public class GameInfo : MonoBehaviour {
 
     private string difficulty;
+    private int seed;
+    public bool isSeed;
 
     public string Difficulty
     {
         get { return difficulty; }
         set { difficulty = value; }
+    }
+
+    public int Seed
+    {
+        get { return seed; }
+        set { seed = value; }
     }
 
     void Awake()
@@ -29,5 +37,6 @@ public class GameInfo : MonoBehaviour {
     public void testDifficulty()
     {
         Debug.Log(difficulty);
+        Debug.Log(seed);
     }
 }

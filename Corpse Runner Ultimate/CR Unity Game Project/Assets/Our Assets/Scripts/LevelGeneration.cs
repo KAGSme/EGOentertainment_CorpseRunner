@@ -16,10 +16,21 @@ public class LevelGeneration : MonoBehaviour {
     private int easyTraps;
     private int medTraps;
     private int hardTraps;
+    private int totalTraps;
+
+    public int seed;
+    public bool useSeed;
 
     void Awake()
     {
-        difficulty = GameObject.Find("Persis Data").GetComponent<GameInfo>().Difficulty;
+        GameInfo data = GameObject.Find("Persis Data").GetComponent<GameInfo>();
+
+        difficulty = data.Difficulty;
+        if (data.isSeed == true)
+        {
+            seed = data.Seed;
+            useSeed = true;
+        }
     }
 
 	// Use this for initialization
@@ -55,13 +66,29 @@ public class LevelGeneration : MonoBehaviour {
         easyTraps = ratio[tempDiff, 0];
         medTraps = ratio[tempDiff, 1];
         hardTraps = ratio[tempDiff, 2];
+        totalTraps = easyTraps + medTraps + hardTraps;
 
         Debug.Log(difficulty + " ratio: " + easyTraps + " " + medTraps + " " + hardTraps);
-	
+
+        spawnTraps();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	
 	}
+
+    void spawnTraps()
+    {
+        if (useSeed == true)
+        {
+            Random.seed = seed;
+            Debug.Log(Random.value + " " + Random.value + " " + Random.value + " " + Random.value + " " + Random.value + " ");
+        }
+        else
+        {
+            seed = Random.seed;
+            Debug.Log(Random.value + " " + Random.value + " " + Random.value + " " + Random.value + " " + Random.value + " ");
+        }
+    }
 }

@@ -50,6 +50,7 @@
      <Compile Include="Assets\Our Assets\Scripts\DifficultyMenuScript.cs" />
      <Compile Include="Assets\Our Assets\Scripts\GameInfo.cs" />
      <Compile Include="Assets\Our Assets\Scripts\LevelGeneration.cs" />
+     <Compile Include="Assets\Our Assets\Scripts\TrapInfo.cs" />
      <None Include="Assets\Standard Assets\Toon Shading\Sources\Shaders\Toony-Basic.shader" />
      <None Include="Assets\Standard Assets\Tessellation Shaders\BumpedSpecularSmooth.shader" />
      <None Include="Assets\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
