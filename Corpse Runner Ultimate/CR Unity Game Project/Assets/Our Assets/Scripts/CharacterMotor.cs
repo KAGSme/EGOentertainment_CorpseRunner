@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CharacterMotor : MonoBehaviour {
+public class CharacterMotor : CommonBehaviour {
 
     public string player;
     public float maxSpeedX = 10f;
@@ -24,14 +24,16 @@ public class CharacterMotor : MonoBehaviour {
     public LayerMask whatIsGround;
     public LayerMask whatIsClimbableWall;
 
+   
+
+
     //!cache things is your friend
     Rigidbody2D Body;  //todo - change addForces to just vector2's
-    Transform Trnsfrm;
     PointListSource Mid;
 
     void Awake() {
+        base.Awake();
         Body = rigidbody2D;
-        Trnsfrm = transform;
 
         var go =  GameObject.Find("Mid");
         if(go) {
@@ -67,8 +69,9 @@ public class CharacterMotor : MonoBehaviour {
     }
 
 
+     [HideInInspector]
     //these are updated in BasicMotorMovement
-    Vector2 xAx = Vector2.right, yAx = Vector2.up;  //todo for player2 intialise these correct
+    public  Vector2 xAx = Vector2.right, yAx = Vector2.up;  //todo for player2 intialise these correct
     float Rot;
 
     /// <summary>
@@ -112,9 +115,15 @@ public class CharacterMotor : MonoBehaviour {
         }
 
         if(canControlX && !_grounded) {
-            float flyForce = 10;
+            float flyForce = 10, airSpeed = maxSpeedX;
+
+            float spdMd = Vector2.Dot(Body.velocity, xAx * Mathf.Sign( inputX ) ) / airSpeed;
+            spdMd *= Mathf.Abs( spdMd );
+            flyForce *= Mathf.Clamp01(1.0f - spdMd );
+
             if(inputX < 0) Body.AddForce(xAx * -flyForce);
             if(inputX > 0) Body.AddForce(xAx * flyForce);
+           
         }
     }
 
